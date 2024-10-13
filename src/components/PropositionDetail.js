@@ -216,7 +216,7 @@ const PropositionDetail = () => {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body1" color="secondary">
-                      If Vited No
+                      If Voted No
                     </Typography>
                     <Typography variant="body2">{group.impact_no}</Typography>
                   </Grid>
