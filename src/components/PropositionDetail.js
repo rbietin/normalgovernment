@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -10,25 +10,34 @@ import {
   CardContent,
   Grid,
   Divider,
+  Button,
+  Box,
 } from '@mui/material';
 import yaml from 'js-yaml';
 
 const PropositionDetail = () => {
   const { id } = useParams();
   const [prop, setProp] = useState(null);
+  const [propositions, setPropositions] = useState([]);
 
   useEffect(() => {
     fetch('/propositions.yaml')
       .then((response) => response.text())
       .then((text) => {
         const data = yaml.load(text);
-        const propositions = data.propositions || data;
-        const proposition = propositions.find((p) => p.id === id);
+        const propositionsData = data.propositions || data;
+        setPropositions(propositionsData);
+        const proposition = propositionsData.find((p) => p.id === id);
         setProp(proposition);
       })
       .catch((error) => {
         console.error('Error loading YAML file:', error);
       });
+  }, [id]);
+
+  // Scroll to top when id changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, [id]);
 
   if (!prop) {
@@ -38,6 +47,13 @@ const PropositionDetail = () => {
       </Container>
     );
   }
+
+  // Find the index of the current proposition
+  const currentIndex = propositions.findIndex((p) => p.id === id);
+
+  // Determine previous and next propositions
+  const prevProp = currentIndex > 0 ? propositions[currentIndex - 1] : null;
+  const nextProp = currentIndex < propositions.length - 1 ? propositions[currentIndex + 1] : null;
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
@@ -206,7 +222,9 @@ const PropositionDetail = () => {
           {prop.winners_losers.map((group, index) => (
             <Card variant="outlined" sx={{ mb: 2 }} key={index}>
               <CardContent>
-                <Typography variant="subtitle1">{group.group}</Typography>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                  {group.group}
+                </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body1" color="primary">
@@ -226,8 +244,56 @@ const PropositionDetail = () => {
           ))}
         </>
       )}
+
+      {/* Navigation Buttons */}
+      <Divider sx={{ my: 4 }} />
+      <Grid container spacing={2} sx={{ mt: 2 }} alignItems="stretch">
+        {prevProp ? (
+          <Grid item xs={4} style={{ display: 'flex' }}>
+            <Button
+              variant="contained"
+              component={Link}
+              to={`/proposition/${prevProp.id}`}
+              color="primary"
+              fullWidth
+              sx={{ flexGrow: 1 }}
+            >
+              ← {prevProp.name}
+            </Button>
+          </Grid>
+        ) : (
+          <Grid item xs={4} />
+        )}
+        {/* Empty middle grid item to take up 1/3 of the space */}
+        <Grid item xs={4} />
+        {nextProp ? (
+          <Grid item xs={4} style={{ display: 'flex' }}>
+            <Button
+              variant="contained"
+              component={Link}
+              to={`/proposition/${nextProp.id}`}
+              color="primary"
+              fullWidth
+              sx={{ flexGrow: 1 }}
+            >
+              {nextProp.name} →
+            </Button>
+          </Grid>
+        ) : (
+          <Grid item xs={4} />
+        )}
+      </Grid>
+
+      {/* Add Blank Space at the End */}
+      <Box sx={{ height: 50 }} />
+
+
+
+
     </Container>
   );
 };
+
+
 
 export default PropositionDetail;
