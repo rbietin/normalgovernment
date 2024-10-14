@@ -1,13 +1,37 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
+import React, { useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useLocation,
+} from 'react-router-dom';
+import { AppBar, Toolbar, Button, Container } from '@mui/material';
+import { initGA, logPageView } from './services/analytics';
 import PropositionsList from './components/PropositionsList';
 import PropositionDetail from './components/PropositionDetail';
 import About from './About';
 
 function App() {
+  // Initialize Google Analytics once when the app loads
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  // Component to track route changes
+  const RouteChangeTracker = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+      logPageView();
+    }, [location]);
+
+    return null;
+  };
+
   return (
     <Router>
+      <RouteChangeTracker />
       <AppBar position="static">
         <Container maxWidth="md">
           <Toolbar disableGutters>
