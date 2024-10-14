@@ -125,7 +125,38 @@ const PropositionDetail = () => {
         </>
       )}
 
+      {/* Potential Winners and Losers */}
+      {prop.winners_losers && (
+        <>
+          <Typography variant="h6">Potential Winners and Losers</Typography>
+          {prop.winners_losers.map((group, index) => (
+            <Card variant="outlined" sx={{ mb: 2 }} key={index}>
+              <CardContent>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                  {group.group}
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1" color="primary">
+                      If Voted Yes
+                    </Typography>
+                    <Typography variant="body2">{group.impact_yes}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1" color="secondary">
+                      If Voted No
+                    </Typography>
+                    <Typography variant="body2">{group.impact_no}</Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          ))}
+        </>
+      )}
+
       {/* Potential Consequences Side by Side */}
+      <Divider sx={{ my: 4 }} />
       {(prop.potential_consequences_yes || prop.potential_consequences_no) && (
         <>
           <Typography variant="h6" gutterBottom>
@@ -215,38 +246,7 @@ const PropositionDetail = () => {
         </>
       )}
 
-      {/* Winners and Losers */}
-      {prop.winners_losers && (
-        <>
-          <Typography variant="h6">Impact on Different Groups</Typography>
-          {prop.winners_losers.map((group, index) => (
-            <Card variant="outlined" sx={{ mb: 2 }} key={index}>
-              <CardContent>
-                <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                  {group.group}
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body1" color="primary">
-                      If Voted Yes
-                    </Typography>
-                    <Typography variant="body2">{group.impact_yes}</Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body1" color="secondary">
-                      If Voted No
-                    </Typography>
-                    <Typography variant="body2">{group.impact_no}</Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          ))}
-        </>
-      )}
-
       {/* Navigation Buttons */}
-      <Divider sx={{ my: 4 }} />
       <Grid container spacing={2} sx={{ mt: 2 }} alignItems="stretch">
         {prevProp ? (
           <Grid item xs={4} style={{ display: 'flex' }}>

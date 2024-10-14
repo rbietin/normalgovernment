@@ -85,14 +85,6 @@ const About = () => {
         • <strong>Telegram:</strong>{' '}
           @rbietin
         <br />
-        • <strong>Twitter:</strong>{' '}
-        <Link
-          href="https://twitter.com/RBietin"
-          target="_blank"
-          rel="noopener"
-        >
-          @RBietin
-        </Link>
       </Typography>
     </Container>
   );
