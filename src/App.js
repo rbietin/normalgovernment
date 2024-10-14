@@ -1,11 +1,7 @@
+// src/App.js
+
 import React, { useEffect } from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useLocation,
-} from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom'; // Remove BrowserRouter
 import { AppBar, Toolbar, Button, Container } from '@mui/material';
 import { initGA, logPageView } from './services/analytics';
 import PropositionsList from './components/PropositionsList';
@@ -13,25 +9,20 @@ import PropositionDetail from './components/PropositionDetail';
 import About from './About';
 
 function App() {
-  // Initialize Google Analytics once when the app loads
+  const location = useLocation();
+
   useEffect(() => {
+    // Initialize GA when the app mounts
     initGA();
   }, []);
 
-  // Component to track route changes
-  const RouteChangeTracker = () => {
-    const location = useLocation();
-
-    useEffect(() => {
-      logPageView();
-    }, [location]);
-
-    return null;
-  };
+  useEffect(() => {
+    // Log page views on route changes
+    logPageView();
+  }, [location]);
 
   return (
-    <Router>
-      <RouteChangeTracker />
+    <>
       <AppBar position="static">
         <Container maxWidth="md">
           <Toolbar disableGutters>
@@ -50,7 +41,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/proposition/:id" element={<PropositionDetail />} />
       </Routes>
-    </Router>
+    </>
   );
 }
 
