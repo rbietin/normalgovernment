@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Container,
   List,
@@ -20,6 +20,29 @@ const BallotList = ({
   archiveLink = { to: '/2024', label: 'Looking for the November 2024 guide? →' },
 }) => {
   const [items, setItems] = useState([]);
+  const location = useLocation();
+  const scrollKey = `ballotScroll:${location.pathname}`;
+
+  // Remember scroll position as the user scrolls this list.
+  useEffect(() => {
+    const onScroll = () => {
+      sessionStorage.setItem(scrollKey, String(window.scrollY));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [scrollKey]);
+
+  // Restore the saved position once the list has rendered (e.g. after going
+  // back from a detail page). Runs after items load so the page is tall enough.
+  useEffect(() => {
+    if (!items.length) return;
+    const saved = sessionStorage.getItem(scrollKey);
+    if (saved == null) return;
+    const y = parseInt(saved, 10);
+    if (!Number.isNaN(y) && y > 0) {
+      requestAnimationFrame(() => window.scrollTo(0, y));
+    }
+  }, [items, scrollKey]);
 
   useEffect(() => {
     fetch(dataUrl)
