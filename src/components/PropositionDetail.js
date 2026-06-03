@@ -15,17 +15,21 @@ import {
 } from '@mui/material';
 import yaml from 'js-yaml';
 
-const PropositionDetail = () => {
+const PropositionDetail = ({ dataUrl = '/propositions.yaml', basePath = '/proposition' }) => {
   const { id } = useParams();
   const [prop, setProp] = useState(null);
   const [propositions, setPropositions] = useState([]);
 
   useEffect(() => {
-    fetch('/propositions.yaml')
+    fetch(dataUrl)
       .then((response) => response.text())
       .then((text) => {
         const data = yaml.load(text);
-        const propositionsData = data.propositions || data;
+        const all = data.propositions || data;
+        // When the file mixes measures and races (2026), only cycle measures.
+        const propositionsData = (Array.isArray(all) ? all : []).filter(
+          (p) => !p.type || p.type === 'proposition'
+        );
         setPropositions(propositionsData);
         const proposition = propositionsData.find((p) => p.id === id);
         setProp(proposition);
@@ -33,7 +37,7 @@ const PropositionDetail = () => {
       .catch((error) => {
         console.error('Error loading YAML file:', error);
       });
-  }, [id]);
+  }, [id, dataUrl]);
 
   // Scroll to top when id changes
   useEffect(() => {
@@ -67,9 +71,28 @@ const PropositionDetail = () => {
         <>
           <Typography variant="h6">Summary</Typography>
           <Typography paragraph>{prop.summary}</Typography>
-          <Divider sx={{ my: 2 }} />
         </>
       )}
+
+      {/* What your vote means */}
+      {(prop.what_yes_means || prop.what_no_means) && (
+        <Grid container spacing={2} sx={{ mb: 1 }}>
+          {prop.what_yes_means && (
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" color="primary">A YES vote means</Typography>
+              <Typography variant="body2">{prop.what_yes_means}</Typography>
+            </Grid>
+          )}
+          {prop.what_no_means && (
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" color="secondary">A NO vote means</Typography>
+              <Typography variant="body2">{prop.what_no_means}</Typography>
+            </Grid>
+          )}
+        </Grid>
+      )}
+
+      <Divider sx={{ my: 2 }} />
 
       {/* Fiscal Impact */}
       {prop.fiscal_impact && (
@@ -246,6 +269,36 @@ const PropositionDetail = () => {
         </>
       )}
 
+      {/* Real-world evidence / outcomes */}
+      {prop.real_world_evidence && (
+        <>
+          <Typography variant="h6">What the evidence shows</Typography>
+          <Typography paragraph>{prop.real_world_evidence}</Typography>
+          <Divider sx={{ my: 2 }} />
+        </>
+      )}
+
+      {/* Sources */}
+      {prop.sources && prop.sources.length > 0 && (
+        <>
+          <Typography variant="subtitle2" color="text.secondary">Sources</Typography>
+          <List dense>
+            {prop.sources.map((s, index) => (
+              <ListItem key={index} sx={{ py: 0 }}>
+                <ListItemText
+                  primary={
+                    <a href={s} target="_blank" rel="noopener noreferrer" style={{ wordBreak: 'break-all' }}>
+                      {s}
+                    </a>
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
+          <Divider sx={{ my: 2 }} />
+        </>
+      )}
+
       {/* Navigation Buttons */}
       <Grid container spacing={2} sx={{ mt: 2 }} alignItems="stretch">
         {prevProp ? (
@@ -253,7 +306,7 @@ const PropositionDetail = () => {
             <Button
               variant="contained"
               component={Link}
-              to={`/proposition/${prevProp.id}`}
+              to={`${basePath}/${prevProp.id}`}
               color="primary"
               fullWidth
               sx={{ flexGrow: 1 }}
@@ -271,7 +324,7 @@ const PropositionDetail = () => {
             <Button
               variant="contained"
               component={Link}
-              to={`/proposition/${nextProp.id}`}
+              to={`${basePath}/${nextProp.id}`}
               color="primary"
               fullWidth
               sx={{ flexGrow: 1 }}

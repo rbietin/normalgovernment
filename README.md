@@ -1,70 +1,81 @@
-# Getting Started with Create React App
+# Normal Government
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A plain-language voter guide that distills what's actually on your ballot — the
+facts and the strongest arguments on every side, with no recommendation and no
+lean. Live at [normalgovernment.com](https://www.normalgovernment.com).
 
-## Available Scripts
+## What it covers
 
-In the project directory, you can run:
+- **June 2, 2026** — San Francisco Consolidated Statewide Direct Primary: all
+  four local ballot measures (A–D) plus the candidate races on the ballot, from
+  Governor down to the local Board of Education seat and the contested Superior
+  Court judgeship. This is the home page (`/`).
+- **November 2024** — the original San Francisco / California general-election
+  guide, kept as an archive at `/2024`.
 
-### `npm start`
+## How a brief is structured
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**Ballot measures** — summary, what a Yes/No vote means, fiscal impact,
+supporters and opponents, the strongest consequences of each vote (each paired
+with a counterargument), who wins and loses, and what the real-world evidence
+shows.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**Candidate races** — what's at stake, then for each front-runner: background,
+track record with concrete outcomes, key positions, endorsements, funding, honest
+pros and cons, and what supporters and critics actually say. Minor candidates get
+a one-line note.
 
-### `npm test`
+The site presents facts and arguments only — it takes no position, makes no
+recommendation, and does not lean for or against any measure or candidate.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+How the research is conducted is documented in-app on the
+[`/methodology`](https://www.normalgovernment.com/methodology) page (source:
+`src/Methodology.js`).
 
-### `npm run build`
+## Project layout
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Path | What it is |
+| --- | --- |
+| `public/ballot_2026.yaml` | The June 2026 data (measures + candidate races). |
+| `public/propositions.yaml` | The November 2024 archive data. |
+| `src/components/BallotList.js` | The 2026 home page (grouped measures + races). |
+| `src/components/RaceDetail.js` | Candidate-race detail view. |
+| `src/components/PropositionDetail.js` | Ballot-measure detail view (both years). |
+| `src/components/PropositionsList.js` | The 2024 archive list. |
+| `src/About.js`, `src/Methodology.js` | About and research-method pages. |
+| `src/services/analytics.js` | Google Analytics wiring. |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Data is plain YAML loaded at runtime with `js-yaml`; each item carries a `type`
+of `proposition` or `race`. The 2026 file is written as JSON (which is valid
+YAML) for reliability.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Running locally
 
-### `npm run eject`
+```bash
+npm install
+npm start      # http://localhost:3000
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Build & deploy
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm run build  # production build into ./build
+npm run deploy # publishes ./build to GitHub Pages (gh-pages)
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The custom domain is set in `public/CNAME`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## A note on accuracy
 
-## Learn More
+The briefs are generated with AI assistance, working from official voter
+pamphlets and public reporting across the political spectrum. They can contain
+errors, omissions, or details that changed after the research date. The site
+takes no position and makes no recommendation — the decision is yours. Every
+page lists its sources; check the official guides at
+[sfelections.org](https://sfelections.org) and
+[voterguide.sos.ca.gov](https://voterguide.sos.ca.gov) before voting.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Bootstrapped with [Create React App](https://github.com/facebook/create-react-app);
+UI built with [MUI](https://mui.com/).
